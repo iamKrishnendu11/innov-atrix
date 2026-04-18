@@ -11,6 +11,8 @@ import MsmeLogin from "./components/auth/MsmeLogin"
 import MsmeRegister from "./components/auth/MsmeRegister"
 import MsmeDashboard from "./components/dashboard/MsmeDashboard"
 import PostBounty from "./components/pages/PostBounty"
+import MsmeSubmissions from "./components/dashboard/MsmeSubmissions"
+import ViewSubmission from "./components/pages/ViewSubmission"
 
 function LandingPage() {
   const navigate = useNavigate()
@@ -44,6 +46,8 @@ export default function App() {
         <Route path="/msme/login"      element={<MsmeLogin />} />
         <Route path="/msme/register"   element={<MsmeRegister />} />
         <Route path="/msme/dashboard"  element={<MsmeDashboard />} />
+        <Route path="/msme/submissions" element={<MsmeSubmissions />} />
+        <Route path="/msme/submissions/:id" element={<ViewSubmission />} />
         <Route path="/msme/post-bounty" element={<PostBounty />} />
       </Routes>
     </div>

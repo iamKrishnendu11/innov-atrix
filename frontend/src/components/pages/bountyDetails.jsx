@@ -10,7 +10,7 @@ import {
     Clock,
     Send,
     Paperclip,
-    CheckCircle2,
+    CheckCircle2
 } from "lucide-react";
 import { differenceInDays, format } from "date-fns";
 
@@ -24,6 +24,8 @@ export default function BountyDetail() {
     const [workLink, setWorkLink] = useState("");
     const [notes, setNotes] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
     useEffect(() => {
         if (!id) { setFetchError("No bounty ID provided."); setLoading(false); return; }
@@ -80,9 +82,33 @@ export default function BountyDetail() {
     const daysLeft = deadline ? differenceInDays(deadline, new Date()) : null;
     const companyInitial = (bounty.company_name || "M")[0].toUpperCase();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (workLink.trim()) setSubmitted(true);
+        if (!workLink.trim()) return;
+
+        setIsSubmitting(true);
+        setSubmitError("");
+
+        try {
+            const token = localStorage.getItem("accessToken");
+            const res = await fetch(`http://localhost:5000/api/submissions/${id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ workLink, notes }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Failed to submit");
+            
+            setSubmitted(true);
+        } catch (err) {
+            setSubmitError(err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const tabs = [
@@ -259,12 +285,21 @@ export default function BountyDetail() {
                                                         />
                                                     </div>
 
+                                                    {submitError && (
+                                                        <p className="text-sm text-rose-400 font-medium">{submitError}</p>
+                                                    )}
+
                                                     <button
                                                         type="submit"
-                                                        className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity"
+                                                        disabled={isSubmitting}
+                                                        className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
                                                     >
-                                                        <Send className="w-4 h-4" />
-                                                        Submit work
+                                                        {isSubmitting ? (
+                                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        ) : (
+                                                            <Send className="w-4 h-4" />
+                                                        )}
+                                                        {isSubmitting ? "Submitting..." : "Submit work"}
                                                     </button>
                                                 </form>
                                             )}

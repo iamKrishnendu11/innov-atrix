@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import msmeRouter from "./routes/msme.route.js";
 import bountyRouter from "./routes/bounty.route.js";
+import submissionRouter from "./routes/submission.route.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use("/api/users",    userRouter);
 app.use("/api/msme",     msmeRouter);
 app.use("/api/bounties", bountyRouter);
+app.use("/api/submissions", submissionRouter);
 
 const PORT = process.env.PORT || 5001;
 await connectDB();
