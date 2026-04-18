@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 
 const navItems = [
-    { name: "Dashboard",      icon: LayoutDashboard, path: "/msme/dashboard" },
-    { name: "Post a Bounty",  icon: Plus,            path: "/msme/post-bounty" },
-    { name: "Post a Task",    icon: Plus,            path: "/msme/post-task" },
-    { name: "Submissions",    icon: ListChecks,      path: "/msme/submissions" },
-    { name: "Applications",   icon: ListChecks,      path: "/msme/applications" },
+    { name: "Dashboard", icon: LayoutDashboard, path: "/msme/dashboard" },
+    { name: "Post a Bounty", icon: Plus, path: "/msme/post-bounty" },
+    { name: "Post a Task", icon: Plus, path: "/msme/post-task" },
+    { name: "Submissions", icon: ListChecks, path: "/msme/submissions" },
+    { name: "Applications", icon: ListChecks, path: "/msme/applications" },
 ];
 
 export default function MsmeDashboardLayout({ children }) {
@@ -62,7 +62,7 @@ export default function MsmeDashboardLayout({ children }) {
                 {/* Logo */}
                 <div className="p-7 pb-4">
                     <div className="text-xl font-extrabold tracking-tighter bg-gradient-to-r from-[#ba9eff] to-[#699cff] bg-clip-text text-transparent">
-                        Innov Atrix
+                        Step-A-Head
                     </div>
                     <div className="text-[10px] text-white/30 uppercase tracking-widest mt-0.5 font-semibold">
                         MSME Portal

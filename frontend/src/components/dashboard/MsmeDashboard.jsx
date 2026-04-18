@@ -72,11 +72,11 @@ export default function MsmeDashboard() {
         const token = localStorage.getItem("msme_accessToken");
         
         Promise.all([
-            fetch("http://localhost:5000/api/bounties/my", {
+            fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties/my`, {
                 headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             }).then((r) => r.json()),
-            fetch("http://localhost:5000/api/tasks/my", {
+            fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks/my`, {
                 headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             }).then((r) => r.json())

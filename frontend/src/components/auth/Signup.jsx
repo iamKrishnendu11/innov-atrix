@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import SignupFormDemo from "./form1"
+import SignupFormDemo from "./Form1"
 import ProfileForm from "./Form2"
 
 export default function Signup() {

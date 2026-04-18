@@ -337,7 +337,7 @@ export default function TaskMarketplace() {
             .filter(Boolean);
         setUserSkills(skillsArray);
 
-        fetch("http://localhost:5000/api/tasks")
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks`)
             .then((r) => r.json())
             .then((data) => {
                 const list = (data.tasks || []).map((b) => ({

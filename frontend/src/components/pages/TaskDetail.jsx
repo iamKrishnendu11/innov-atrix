@@ -39,7 +39,7 @@ export default function TaskDetail() {
 
     useEffect(() => {
         if (!id) { setFetchError("No task ID provided."); setLoading(false); return; }
-        fetch(`http://localhost:5000/api/tasks/${id}`)
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks/${id}`)
             .then((r) => {
                 if (!r.ok) throw new Error("Task not found");
                 return r.json();
@@ -103,7 +103,7 @@ export default function TaskDetail() {
 
         try {
             const token = localStorage.getItem("accessToken");
-            const res = await fetch(`http://localhost:5000/api/submissions/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -132,7 +132,7 @@ export default function TaskDetail() {
             const token = localStorage.getItem("accessToken");
             if (!token) throw new Error("Please log in first.");
 
-            const res = await fetch(`http://localhost:5000/api/applications/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

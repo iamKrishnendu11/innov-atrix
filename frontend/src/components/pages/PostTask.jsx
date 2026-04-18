@@ -28,7 +28,7 @@ export default function PostTask() {
             const token = localStorage.getItem("msme_accessToken");
             if (!token) throw new Error("Please log in to post a task.");
 
-            const res = await fetch("http://localhost:5000/api/tasks", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

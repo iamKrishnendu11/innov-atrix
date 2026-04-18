@@ -25,10 +25,10 @@ export default function MsmeSubmissions() {
             try {
                 const token = localStorage.getItem("msme_accessToken");
                 const [rBounties, rSubs] = await Promise.all([
-                    fetch("http://localhost:5000/api/bounties/my", {
+                    fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties/my`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    fetch("http://localhost:5000/api/submissions/msme", {
+                    fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/msme`, {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -60,7 +60,7 @@ export default function MsmeSubmissions() {
     const handleAccept = async (bountyId, submissionId) => {
         try {
             const token = localStorage.getItem("msme_accessToken");
-            await fetch(`http://localhost:5000/api/submissions/${submissionId}/status`, {
+            await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${submissionId}/status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status: "accepted" })
@@ -81,7 +81,7 @@ export default function MsmeSubmissions() {
     const handleDecline = async (bountyId, submissionId) => {
         try {
             const token = localStorage.getItem("msme_accessToken");
-            await fetch(`http://localhost:5000/api/submissions/${submissionId}/status`, {
+            await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${submissionId}/status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status: "declined" })

@@ -25,10 +25,10 @@ export default function MsmeApplications() {
             try {
                 const token = localStorage.getItem("msme_accessToken");
                 const [rTasks, rSubs] = await Promise.all([
-                    fetch("http://localhost:5000/api/tasks/my", {
+                    fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks/my`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    fetch("http://localhost:5000/api/applications/msme", {
+                    fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/msme`, {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -38,8 +38,9 @@ export default function MsmeApplications() {
                 const subMap = {};
                 if (dataSubs.applications) {
                     dataSubs.applications.forEach(sub => {
-                        if (!subMap[sub.task]) subMap[sub.task] = [];
-                        subMap[sub.task].push(sub);
+                        const taskIdStr = sub.task._id ? sub.task._id.toString() : sub.task.toString();
+                        if (!subMap[taskIdStr]) subMap[taskIdStr] = [];
+                        subMap[taskIdStr].push(sub);
                     });
                 }
                 
@@ -60,7 +61,7 @@ export default function MsmeApplications() {
     const handleAccept = async (taskId, submissionId) => {
         try {
             const token = localStorage.getItem("msme_accessToken");
-            await fetch(`http://localhost:5000/api/applications/${submissionId}/status`, {
+            await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/${submissionId}/status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status: "accepted" })
@@ -81,7 +82,7 @@ export default function MsmeApplications() {
     const handleDecline = async (taskId, submissionId) => {
         try {
             const token = localStorage.getItem("msme_accessToken");
-            await fetch(`http://localhost:5000/api/applications/${submissionId}/status`, {
+            await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/${submissionId}/status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ status: "declined" })
@@ -198,7 +199,20 @@ export default function MsmeApplications() {
                                                                 <p className="text-xs text-white/40">{active.studentUsername}</p>
                                                             </div>
                                                         </div>
-                                                        </div>
+                                                        {active.trustScore !== undefined && (
+                                                            <div className={`flex flex-col items-end`}>
+                                                                <div className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold ${
+                                                                    active.trustScore >= 75 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                                                    active.trustScore >= 50 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                                    'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                                                }`}>
+                                                                    <span>Trust Score</span>
+                                                                    <span className="text-sm">{active.trustScore}%</span>
+                                                                </div>
+                                                                <p className="text-[10px] text-white/30 mt-1 uppercase tracking-widest">Algorithm Verified</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
 
                                                     {/* Notes and Images */}
                                                     <div className="mb-6">

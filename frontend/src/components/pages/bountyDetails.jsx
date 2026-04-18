@@ -34,7 +34,7 @@ export default function BountyDetail() {
         try {
             const token = localStorage.getItem("accessToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const res = await fetch(`http://localhost:5000/api/submissions/bounty/${bountyId}`, { headers });
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/bounty/${bountyId}`, { headers });
             if (res.ok) {
                 const data = await res.json();
                 setSubmissionCount(data.totalCount ?? 0);
@@ -47,7 +47,7 @@ export default function BountyDetail() {
 
     useEffect(() => {
         if (!id) { setFetchError("No bounty ID provided."); setLoading(false); return; }
-        fetch(`http://localhost:5000/api/bounties/${id}`)
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties/${id}`)
             .then((r) => {
                 if (!r.ok) throw new Error("Bounty not found");
                 return r.json();
@@ -111,7 +111,7 @@ export default function BountyDetail() {
 
         try {
             const token = localStorage.getItem("accessToken");
-            const res = await fetch(`http://localhost:5000/api/submissions/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -65,7 +65,7 @@ export default function PostBounty() {
         setLoading(true);
         try {
             const token = localStorage.getItem("msme_accessToken");
-            const res = await fetch("http://localhost:5000/api/bounties", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

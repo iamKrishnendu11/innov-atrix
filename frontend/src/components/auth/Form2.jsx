@@ -48,7 +48,7 @@ export default function ProfileForm({ form1Data, onBack }) {
             console.log("Form1 Data passed from step 1:", form1Data);
             console.log("Final Payload being sent:", payload);
 
-            const res = await fetch("http://localhost:5000/api/users/signup", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/users/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

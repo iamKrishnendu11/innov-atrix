@@ -60,7 +60,7 @@ export default function ViewSubmission() {
         const fetchSubmission = async () => {
             const token = localStorage.getItem("msme_accessToken");
             try {
-                const res = await fetch(`http://localhost:5000/api/submissions/${id}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data = await res.json();
@@ -80,7 +80,7 @@ export default function ViewSubmission() {
         setActionLoading(true);
         try {
             const token = localStorage.getItem("msme_accessToken");
-            const res = await fetch(`http://localhost:5000/api/submissions/${id}/status`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/${id}/status`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

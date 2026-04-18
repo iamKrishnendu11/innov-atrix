@@ -76,7 +76,7 @@ const Dashboard = () => {
             // Then refresh from backend for latest data
             if (token) {
                 try {
-                    const res = await fetch("http://localhost:5000/api/users/me", {
+                    const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/users/me`, {
                         headers: { Authorization: `Bearer ${token}` },
                         credentials: "include",
                     });
@@ -96,7 +96,7 @@ const Dashboard = () => {
 
                 // Fetch student's missions
                 try {
-                    const mRes = await fetch("http://localhost:5000/api/submissions/my", {
+                    const mRes = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/my`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (mRes.ok) {

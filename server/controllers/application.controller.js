@@ -1,5 +1,6 @@
 import { Application } from "../models/application.model.js";
 import { Task } from "../models/task.model.js";
+import { calculateTrustScore } from "../utils/trustScore.js";
 
 // ── Student: Apply to a task
 export const applyToTask = async (req, res) => {
@@ -36,8 +37,26 @@ export const applyToTask = async (req, res) => {
 export const getMsmeApplications = async (req, res) => {
     try {
         const msmeId = req.msmeId; // from verifyMsmeJWT
-        const applications = await Application.find({ msme: msmeId }).sort({ createdAt: -1 });
-        return res.json({ applications });
+        const applications = await Application.find({ msme: msmeId })
+            .populate("studentId", "name username profileScore tasksCompleted bountiesCompleted rating skills description")
+            .populate("task", "title skill description budget status")
+            .lean();
+
+        // Calculate custom trust score and embed in the output
+        const scoredApplications = applications.map(app => {
+            const trustScore = calculateTrustScore(app.studentId, app.task);
+            return {
+                ...app,
+                studentName: app.studentId?.name || app.studentName,
+                studentUsername: app.studentId?.username || app.studentUsername,
+                trustScore
+            };
+        });
+
+        // Sort dynamically so highest Trust Score appears at the top
+        scoredApplications.sort((a, b) => b.trustScore - a.trustScore);
+
+        return res.json({ applications: scoredApplications });
     } catch (err) {
         console.error("getMsmeApplications error:", err);
         return res.status(500).json({ message: "Server error" });

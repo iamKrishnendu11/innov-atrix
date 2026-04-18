@@ -47,7 +47,7 @@ export default function MsmeRegister() {
         setLoading(true);
         setError("");
         try {
-            const res = await fetch("http://localhost:5000/api/msme/register", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/msme/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

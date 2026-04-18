@@ -329,7 +329,7 @@ export default function BountyMarketplace() {
     const [liveBounties, setLiveBounties] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/bounties")
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties`)
             .then((r) => r.json())
             .then((data) => {
                 const list = (data.bounties || []).map((b) => ({
