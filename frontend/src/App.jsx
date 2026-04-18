@@ -8,57 +8,9 @@ import Dashboard from "./components/dashboard/Dashboard"
 import Bounties from "./components/pages/Bounty"
 import BountyDetail from "./components/pages/bountyDetails"
 import BentoGrid from "./components/landing-page/BentoGrid"
-// import ScrollText from "./components/landing-page/Scroll-text"
 import Timeline from "./components/landing-page/Timeline"
 import { PricingSection } from "./components/landing-page/Pricing"
 
-
-function LandingPage() {
-  const navigate = useNavigate()
-  return (
-    <>
-      <Navbar
-        onGetStarted={() => navigate("/signup")}
-        onOpenLogin={() => navigate("/login")}
-      />
-      <Hero />
-      <BentoGrid />
-      <Timeline />
-      <PricingSection />
-      {/* <ScrollText /> */}
-      <Footer />
-    </>
-  )
-}
-
-export default function App() {
-  return (
-    <div className="bg-black w-screen min-h-screen">
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={
-          <div className="min-h-screen w-full flex items-center justify-center bg-black">
-            <Login />
-          </div>
-        } />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/bounties" element={<Bounties />} />
-        <Route path="/bounty-detail" element={<BountyDetail />} />
-        <Route path="/bounty-detail/:id" element={<BountyDetail />} />
-      </Routes>
-    </div>
-  )
-}
-import { Routes, Route, useNavigate } from "react-router-dom"
-import Navbar from "./components/landing-page/Navbar"
-import Hero from "./components/landing-page/Hero"
-import Footer from "./components/landing-page/Footer"
-import Signup from "./components/auth/Signup"
-import Login from "./components/auth/Login"
-import Dashboard from "./components/dashboard/Dashboard"
-import Bounties from "./components/pages/Bounty"
-import BountyDetail from "./components/pages/bountyDetails"
 import MsmeLogin from "./components/auth/MsmeLogin"
 import MsmeRegister from "./components/auth/MsmeRegister"
 import MsmeDashboard from "./components/dashboard/MsmeDashboard"
@@ -79,6 +31,9 @@ function LandingPage() {
         onOpenLogin={() => navigate("/login")}
       />
       <Hero />
+      <BentoGrid />
+      <Timeline />
+      <PricingSection />
       <Footer />
     </>
   )
