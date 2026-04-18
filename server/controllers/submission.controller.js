@@ -1,5 +1,36 @@
 import { Submission } from "../models/submission.model.js";
 import { Bounty } from "../models/bounty.model.js";
+import { User } from "../models/user.model.js";
+
+// ── GET /api/submissions/bounty/:bountyId  (Student — public count + own submission) ──
+export const getSubmissionsByBounty = async (req, res) => {
+    try {
+        const { bountyId } = req.params;
+        const totalCount = await Submission.countDocuments({ bounty: bountyId });
+        let mySubmission = null;
+        if (req.user) {
+            mySubmission = await Submission.findOne({ bounty: bountyId, studentId: req.user._id }).lean();
+        }
+        return res.json({ totalCount, mySubmission });
+    } catch (err) {
+        console.error("getSubmissionsByBounty error:", err);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+
+// ── GET /api/submissions/my  (Student — their own submissions with bounty info) ─
+export const getMySubmissions = async (req, res) => {
+    try {
+        const submissions = await Submission.find({ studentId: req.user._id })
+            .populate("bounty", "title budget status")
+            .sort({ createdAt: -1 })
+            .lean();
+        return res.json({ submissions });
+    } catch (err) {
+        console.error("getMySubmissions error:", err);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 
 // ── GET /api/submissions/:id  (MSME views a single submission) ────────────────
 export const getSubmissionById = async (req, res) => {
@@ -84,14 +115,29 @@ export const updateSubmissionStatus = async (req, res) => {
         submission.status = status;
         await submission.save();
 
-        // If accepted, auto-decline all other pending submissions for this bounty
+        // If accepted:
+        // 1. Auto-decline all other pending for this bounty
+        // 2. Credit student's earnings & increment bounty count
+        // 3. Close the bounty
         if (status === "accepted") {
             await Submission.updateMany(
                 { bounty: submission.bounty, _id: { $ne: submission._id }, status: "pending" },
                 { $set: { status: "declined" } }
             );
-            // Optionally set Bounty to closed
-            await Bounty.findByIdAndUpdate(submission.bounty, { status: "closed" });
+
+            // Credit student
+            const bountyDoc = await Bounty.findById(submission.bounty);
+            if (bountyDoc) {
+                await User.findByIdAndUpdate(submission.studentId, {
+                    $inc: {
+                        earnings: bountyDoc.budget,
+                        bountiesCompleted: 1,
+                    },
+                });
+                // Close bounty so it disappears from marketplace
+                bountyDoc.status = "closed";
+                await bountyDoc.save();
+            }
         }
 
         return res.json({ message: `Submission ${status}`, submission });

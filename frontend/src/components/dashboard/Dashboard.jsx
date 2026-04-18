@@ -55,6 +55,7 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [missions, setMissions] = useState([]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -92,6 +93,17 @@ const Dashboard = () => {
                 } catch {
                     // Silently use cached data if network fails
                 }
+
+                // Fetch student's missions
+                try {
+                    const mRes = await fetch("http://localhost:5000/api/submissions/my", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (mRes.ok) {
+                        const mData = await mRes.json();
+                        setMissions(mData.submissions || []);
+                    }
+                } catch { /* ignore */ }
             }
         };
 
@@ -245,13 +257,17 @@ const Dashboard = () => {
                             {/* Quick stats */}
                             <div className="flex gap-6 glass-panel p-6 rounded-2xl border border-outline-variant/10">
                                 <div className="text-center">
-                                    <div className="text-3xl font-black text-on-surface tracking-tighter">0</div>
+                                    <div className="text-3xl font-black text-on-surface tracking-tighter">
+                                        {user.bountiesCompleted ?? 0}
+                                    </div>
                                     <div className="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Bounties</div>
                                 </div>
                                 <div className="w-px bg-outline-variant/20" />
                                 <div className="text-center">
                                     <div className="text-3xl font-black text-on-surface tracking-tighter">
-                                        —
+                                        {user.earnings > 0
+                                            ? `₹${Number(user.earnings).toLocaleString("en-IN")}`
+                                            : "—"}
                                     </div>
                                     <div className="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Earnings</div>
                                 </div>
@@ -277,11 +293,15 @@ const Dashboard = () => {
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                                     <div className="bg-surface-container-highest p-4 rounded-xl border border-outline-variant/10">
                                         <div className="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Tasks Completed</div>
-                                        <div className="text-2xl font-bold text-on-surface">0</div>
+                                        <div className="text-2xl font-bold text-on-surface">{user.bountiesCompleted ?? 0}</div>
                                     </div>
                                     <div className="bg-surface-container-highest p-4 rounded-xl border border-outline-variant/10">
                                         <div className="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Task Earnings</div>
-                                        <div className="text-2xl font-bold text-on-surface">₹0</div>
+                                        <div className="text-2xl font-bold text-on-surface">
+                                            {user.earnings > 0
+                                                ? `₹${Number(user.earnings).toLocaleString("en-IN")}`
+                                                : "₹0"}
+                                        </div>
                                     </div>
                                     {/* Profile Score donut */}
                                     <motion.div
@@ -374,25 +394,63 @@ const Dashboard = () => {
                                 </motion.section>
                             )}
 
-                            {/* Recent Missions placeholder */}
+                            {/* Recent Missions — live */}
                             <section className="bg-surface-container-low rounded-2xl p-6 md:p-8 ghost-border">
                                 <h2 className="text-xl font-bold text-on-surface mb-6 flex items-center gap-3">
                                     <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: '"FILL" 0' }}>rocket_launch</span>
                                     Recent Missions
                                 </h2>
-                                <div className="flex flex-col items-center justify-center py-10 text-center">
-                                    <div className="h-12 w-12 rounded-2xl bg-accent flex items-center justify-center mb-3">
-                                        <span className="material-symbols-outlined text-on-surface-variant" style={{ fontVariationSettings: '"FILL" 0' }}>inbox</span>
+
+                                {missions.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                                        <div className="h-12 w-12 rounded-2xl bg-accent flex items-center justify-center mb-3">
+                                            <span className="material-symbols-outlined text-on-surface-variant" style={{ fontVariationSettings: '"FILL" 0' }}>inbox</span>
+                                        </div>
+                                        <p className="text-sm font-semibold text-on-surface">No missions yet</p>
+                                        <p className="text-xs text-on-surface-variant mt-1">Complete bounties to see them here</p>
+                                        <Link
+                                            to="/bounties"
+                                            className="mt-4 px-5 py-2 text-xs font-semibold bg-gradient-to-r from-[#ba9eff] to-[#699cff] text-black rounded-full hover:opacity-90 transition-opacity"
+                                        >
+                                            Browse Bounties
+                                        </Link>
                                     </div>
-                                    <p className="text-sm font-semibold text-on-surface">No missions yet</p>
-                                    <p className="text-xs text-on-surface-variant mt-1">Complete bounties to see them here</p>
-                                    <Link
-                                        to="/bounties"
-                                        className="mt-4 px-5 py-2 text-xs font-semibold bg-gradient-to-r from-[#ba9eff] to-[#699cff] text-black rounded-full hover:opacity-90 transition-opacity"
-                                    >
-                                        Browse Bounties
-                                    </Link>
-                                </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {missions.slice(0, 5).map((m) => {
+                                            const b = m.bounty || {};
+                                            const statusMap = {
+                                                accepted: { label: "Accepted", cls: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" },
+                                                declined: { label: "Declined", cls: "text-red-400 bg-red-400/10 border-red-400/20" },
+                                                pending:  { label: "Pending",  cls: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
+                                            };
+                                            const s = statusMap[m.status] || statusMap.pending;
+                                            return (
+                                                <motion.div
+                                                    key={m._id}
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    className="flex items-center justify-between gap-4 p-4 rounded-xl bg-surface-container border border-outline-variant/10 hover:border-outline-variant/20 transition-all"
+                                                >
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-semibold text-on-surface truncate">{b.title || "Bounty"}</p>
+                                                        <p className="text-xs text-on-surface-variant mt-0.5">
+                                                            ₹{Number(b.budget || 0).toLocaleString("en-IN")} prize
+                                                        </p>
+                                                    </div>
+                                                    <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-semibold border ${s.cls}`}>
+                                                        {s.label}
+                                                    </span>
+                                                </motion.div>
+                                            );
+                                        })}
+                                        {missions.length > 5 && (
+                                            <p className="text-xs text-center text-on-surface-variant pt-2">
+                                                +{missions.length - 5} more submissions
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                             </section>
                         </div>
 

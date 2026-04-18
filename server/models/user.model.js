@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
         pastExperiences: { score: { type: Number, default: 0 }, max: { type: Number, default: 35 } },
     },
 
+    // Bounty activity
+    earnings:           { type: Number, default: 0 },
+    bountiesCompleted:  { type: Number, default: 0 },
+
     refreshToken: { type: String }
 }, { timestamps: true });
 
