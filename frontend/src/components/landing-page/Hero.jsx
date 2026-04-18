@@ -101,14 +101,14 @@ export default function Hero() {
                     variants={itemVariants}
                     className="flex flex-wrap gap-4 justify-center pt-4 sm:pt-6 mb-16 w-full"
                 >
-                    <button 
-                        onClick={() => navigate("/signup")}
+                    <button
+                        onClick={() => navigate("/msme/login")}
                         className="bg-white text-black px-6 py-2.5 text-sm rounded-full font-medium hover:bg-zinc-200 transition-colors cursor-pointer"
                     >
-                        Start Building
+                        Hire Talent
                     </button>
                     <button className="border border-white/20 px-6 py-2.5 text-sm rounded-full text-white hover:bg-white/10 transition-colors">
-                        View Demo
+                        Find Work
                     </button>
                 </motion.div>
 

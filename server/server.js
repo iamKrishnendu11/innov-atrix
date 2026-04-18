@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./configs/db.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
+import msmeRouter from "./routes/msme.route.js";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 // Routes declaration
 app.use("/api/users", userRouter);
+app.use("/api/msme", msmeRouter);
 
 const PORT = process.env.PORT || 5001;
 await connectDB();
