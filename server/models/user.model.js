@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { calculateProfileScore } from "../utils/profileScore.js";
 
 const userSchema = new mongoose.Schema({
     // Form 1 fields
@@ -17,6 +18,20 @@ const userSchema = new mongoose.Schema({
     pastExperiences: { type: String, default: "" },
     portfolioLink: { type: String, default: "" },
 
+    // Computed profile score (0–100)
+    profileScore: { type: Number, default: 0 },
+    profileScoreBreakdown: {
+        skills: { score: { type: Number, default: 0 }, max: { type: Number, default: 35 } },
+        description: { score: { type: Number, default: 0 }, max: { type: Number, default: 30 } },
+        pastExperiences: { score: { type: Number, default: 0 }, max: { type: Number, default: 35 } },
+    },
+
+    // Tracking activity
+    earnings:           { type: Number, default: 0 },
+    bountiesCompleted:  { type: Number, default: 0 },
+    tasksCompleted:     { type: Number, default: 0 },
+    rating:             { type: Number, default: 0 },
+
     refreshToken: { type: String }
 }, { timestamps: true });
 
@@ -24,6 +39,22 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10);
+});
+
+// Auto-recalculate profile score whenever relevant fields change
+userSchema.pre("save", function () {
+    const profileFields = ["skills", "description", "pastExperiences"];
+    const needsRecalc = profileFields.some((f) => this.isModified(f)) || this.isNew;
+    if (!needsRecalc) return;
+
+    const result = calculateProfileScore({
+        skills: this.skills,
+        description: this.description,
+        pastExperiences: this.pastExperiences,
+    });
+
+    this.profileScore = result.total;
+    this.profileScoreBreakdown = result.breakdown;
 });
 
 // Compare hashed passwords

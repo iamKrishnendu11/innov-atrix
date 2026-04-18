@@ -155,11 +155,11 @@ function Sidebar() {
                 </div>
             </div>
             <div className="flex-1 px-4 space-y-2 mt-4">
-                <Link to="/tasks" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all group">
+                <Link to="/tasks" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 transition-all">
                     <CheckSquare className="h-4 w-4" />
                     <span className="font-medium text-sm">Tasks</span>
                 </Link>
-                <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 transition-all">
+                <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all group">
                     <Repeat2 className="h-4 w-4" />
                     <span className="font-medium text-sm">Bounties</span>
                 </Link>
@@ -177,7 +177,7 @@ function Sidebar() {
             <div className="mx-4 mb-4 p-4 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/20">
                 <p className="text-xs font-bold text-white mb-1">Level up faster</p>
                 <p className="text-[11px] text-white/40 leading-relaxed">
-                    Complete a bounty this week to boost your profile score.
+                    Complete a task this week to boost your profile score.
                 </p>
             </div>
 
@@ -197,8 +197,8 @@ function Sidebar() {
 }
 
 // ── Bounty Card ───────────────────────────────────────────────────────────────
-function BountyCard({ bounty, index }) {
-    const deadline = bounty.deadline ? new Date(bounty.deadline) : null;
+function TaskCard({ task, index }) {
+    const deadline = task.deadline ? new Date(task.deadline) : null;
     const daysLeft = deadline ? differenceInDays(deadline, new Date()) : null;
 
     return (
@@ -207,14 +207,14 @@ function BountyCard({ bounty, index }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
         >
-            <Link to={`/bounty-detail/${bounty.id}`} className="block group h-full">
+            <Link to={`/task-detail/${task.id}`} className="block group h-full">
                 <div className="relative h-full rounded-2xl bg-white/[0.03] border border-white/8 p-5 transition-all duration-300 hover:border-purple-500/30 hover:-translate-y-0.5 hover:bg-white/[0.05] hover:shadow-[0_8px_30px_rgba(186,158,255,0.08)]">
                     {/* Company row */}
                     <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex items-center gap-2 text-xs text-white/40 min-w-0">
                             <Building2 className="w-3.5 h-3.5 shrink-0" />
-                            <span className="truncate">{bounty.company_name}</span>
-                            {bounty.company_verified && (
+                            <span className="truncate">{task.company_name}</span>
+                            {task.company_verified && (
                                 <span className="flex items-center gap-0.5 text-emerald-400 font-semibold">
                                     <BadgeCheck className="w-3.5 h-3.5" />
                                     Verified
@@ -226,24 +226,24 @@ function BountyCard({ bounty, index }) {
 
                     {/* Title */}
                     <h3 className="text-base font-semibold text-white leading-snug mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors">
-                        {bounty.title}
+                        {task.title}
                     </h3>
 
                     {/* Description */}
                     <p className="text-sm text-white/35 line-clamp-2 mb-4 leading-relaxed">
-                        {bounty.description}
+                        {task.description}
                     </p>
 
                     {/* Skill tags */}
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                        {bounty.skills_required.slice(0, 3).map((s) => (
+                        {task.skills_required.slice(0, 3).map((s) => (
                             <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 font-medium">
                                 {s}
                             </span>
                         ))}
-                        {bounty.skills_required.length > 3 && (
+                        {task.skills_required.length > 3 && (
                             <span className="text-xs px-2.5 py-1 rounded-full bg-transparent border border-white/10 text-white/30">
-                                +{bounty.skills_required.length - 3}
+                                +{task.skills_required.length - 3}
                             </span>
                         )}
                     </div>
@@ -252,7 +252,7 @@ function BountyCard({ bounty, index }) {
                     <div className="flex items-center justify-between pt-3 border-t border-white/5">
                         <div className="flex items-center gap-1 text-white font-bold text-sm">
                             <IndianRupee className="w-3.5 h-3.5" />
-                            <span>{Number(bounty.budget).toLocaleString("en-IN")}</span>
+                            <span>{Number(task.budget).toLocaleString("en-IN")}</span>
                         </div>
                         {deadline && (
                             <div className={`flex items-center gap-1.5 text-xs font-medium ${daysLeft < 7 ? "text-rose-400" : "text-white/35"}`}>
@@ -321,18 +321,26 @@ function BudgetSlider({ value, onChange, min = 0, max = 100000 }) {
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-export default function BountyMarketplace() {
+export default function TaskMarketplace() {
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("all");
     const [deadline, setDeadline] = useState("any");
     const [maxBudget, setMaxBudget] = useState(100000);
-    const [liveBounties, setLiveBounties] = useState([]);
+    const [liveTasks, setLiveTasks] = useState([]);
+    const [userSkills, setUserSkills] = useState([]);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties`)
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const skillsArray = (storedUser.skills || "")
+            .split(/[,\n]+/)
+            .map(s => s.trim().toLowerCase())
+            .filter(Boolean);
+        setUserSkills(skillsArray);
+
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks`)
             .then((r) => r.json())
             .then((data) => {
-                const list = (data.bounties || []).map((b) => ({
+                const list = (data.tasks || []).map((b) => ({
                     id: b._id,
                     title: b.title,
                     description: b.description,
@@ -343,15 +351,24 @@ export default function BountyMarketplace() {
                     deadline: b.deadline ? b.deadline.slice(0, 10) : null,
                     category: "all",
                 }));
-                setLiveBounties(list);
+                setLiveTasks(list);
             })
             .catch(() => {});
     }, []);
 
-    const allBounties = liveBounties.length > 0 ? liveBounties : DUMMY_BOUNTIES;
+    const allTasks = liveTasks.length > 0 ? liveTasks : DUMMY_BOUNTIES;
 
     const filtered = useMemo(() => {
-        return allBounties.filter((b) => {
+        return allTasks.filter((b) => {
+            // Skill match check
+            const taskSkills = (b.skills_required || []).map(s => s.toLowerCase());
+            // It matches if AT LEAST one of the user's skills matches the task skills, OR if there are no task skills defined
+            const matchesSkills = taskSkills.length === 0 || taskSkills.some(ts => 
+                userSkills.some(us => us.includes(ts) || ts.includes(us))
+            );
+
+            if (!matchesSkills) return false;
+
             const haystack = `${b.title} ${b.description} ${(b.skills_required || []).join(" ")} ${b.company_name}`.toLowerCase();
             if (search && !haystack.includes(search.toLowerCase())) return false;
             if (category !== "all" && b.category !== category) return false;
@@ -362,7 +379,7 @@ export default function BountyMarketplace() {
             }
             return true;
         });
-    }, [search, category, deadline, maxBudget, allBounties]);
+    }, [search, category, deadline, maxBudget, allTasks, userSkills]);
 
     const clearFilters = () => {
         setSearch("");
@@ -384,7 +401,7 @@ export default function BountyMarketplace() {
                 {/* ── Header ── */}
                 <div className="mb-8">
                     <p className="text-xs text-white/30 uppercase tracking-widest font-semibold mb-1">Marketplace</p>
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Bounty Marketplace</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Task Marketplace</h1>
                     <p className="text-white/40 mt-1 text-sm">Real projects from verified MSMEs — ship and get paid.</p>
                 </div>
 
@@ -431,7 +448,7 @@ export default function BountyMarketplace() {
                 {/* ── Count + clear ── */}
                 <div className="flex items-center justify-between mb-5">
                     <p className="text-sm text-white/40">
-                        <span className="text-white font-medium">{filtered.length}</span> bounties
+                        <span className="text-white font-medium">{filtered.length}</span> tasks
                     </p>
                     {hasActiveFilters && (
                         <button
@@ -450,7 +467,7 @@ export default function BountyMarketplace() {
                         <div className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
                             <Search className="h-6 w-6 text-white/20" />
                         </div>
-                        <h3 className="text-base font-semibold text-white">No bounties match your filters</h3>
+                        <h3 className="text-base font-semibold text-white">No tasks match your filters</h3>
                         <p className="text-sm text-white/35 mt-1 max-w-xs">Try widening the budget range or clearing a filter.</p>
                         <button onClick={clearFilters} className="mt-5 px-5 py-2 text-sm font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full transition-opacity hover:opacity-90">
                             Clear filters
@@ -459,7 +476,7 @@ export default function BountyMarketplace() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filtered.map((b, i) => (
-                            <BountyCard key={b.id} bounty={b} index={i} />
+                            <TaskCard key={b.id} task={b} index={i} />
                         ))}
                     </div>
                 )}
@@ -468,13 +485,13 @@ export default function BountyMarketplace() {
 
             {/* Mobile bottom nav */}
             <nav className="md:hidden fixed bottom-0 w-full h-16 bg-[#0e0e0e]/90 backdrop-blur-xl border-t border-white/5 flex justify-around items-center z-50 px-2">
-                <Link to="/tasks" className="flex flex-col items-center w-16 text-white/40 hover:text-white transition-colors">
+                <Link to="/tasks" className="flex flex-col items-center w-16 text-purple-400">
                     <CheckSquare className="h-5 w-5 mb-1" />
-                    <span className="text-[10px]">Tasks</span>
+                    <span className="text-[10px] font-bold">Tasks</span>
                 </Link>
-                <Link to="/bounties" className="flex flex-col items-center w-16 text-purple-400">
+                <Link to="/bounties" className="flex flex-col items-center w-16 text-white/40 hover:text-white transition-colors">
                     <Repeat2 className="h-5 w-5 mb-1" />
-                    <span className="text-[10px] font-bold">Bounties</span>
+                    <span className="text-[10px]">Bounties</span>
                 </Link>
                 <Link to="/dashboard" className="flex flex-col items-center w-16 text-white/40 hover:text-white transition-colors">
                     <User className="h-5 w-5 mb-1" />

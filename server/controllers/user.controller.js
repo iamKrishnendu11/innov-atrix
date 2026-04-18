@@ -95,3 +95,43 @@ export const loginUser = async (req, res) => {
         return res.status(500).json({ message: error.message || "Internal server error during login" });
     }
 };
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        // req.user is attached by verifyJWT middleware
+        return res.status(200).json({ user: req.user });
+    } catch (error) {
+        return res.status(500).json({ message: error.message || "Error fetching user" });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { description, skills, githubUrl, linkedinUrl, pastExperiences, portfolioLink } = req.body;
+
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // Update only the fields that were provided
+        if (description   !== undefined) user.description    = description;
+        if (skills        !== undefined) user.skills         = skills;
+        if (githubUrl     !== undefined) user.githubUrl      = githubUrl;
+        if (linkedinUrl   !== undefined) user.linkedinUrl    = linkedinUrl;
+        if (pastExperiences !== undefined) user.pastExperiences = pastExperiences;
+        if (portfolioLink !== undefined) user.portfolioLink  = portfolioLink;
+
+        // profileScore is recalculated automatically by the pre-save hook
+        await user.save({ validateBeforeSave: false });
+
+        const updatedUser = await User.findById(user._id).select("-password -refreshToken");
+
+        return res.status(200).json({
+            message: "Profile updated successfully",
+            user: updatedUser,
+            profileScore: updatedUser.profileScore,
+            profileScoreBreakdown: updatedUser.profileScoreBreakdown,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message || "Error updating profile" });
+    }
+};

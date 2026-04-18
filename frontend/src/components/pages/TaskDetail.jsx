@@ -15,46 +15,38 @@ import {
 import { differenceInDays, format } from "date-fns";
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
-export default function BountyDetail() {
+export default function TaskDetail() {
     const { id } = useParams();
-    const [bounty, setBounty] = useState(null);
+    const [task, setTask] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState("");
-    const [activeTab, setActiveTab] = useState("submit");
+    const [activeTab, setActiveTab] = useState("details");
     const [workLink, setWorkLink] = useState("");
     const [notes, setNotes] = useState("");
+    const [applied, setApplied] = useState(false);
+    const [submittingApply, setSubmittingApply] = useState(false);
+    const [applyError, setApplyError] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
     const [submissionCount, setSubmissionCount] = useState(0);
     const [mySubmission, setMySubmission] = useState(null);
 
-    // Fetch submission count + student's own submission
-    const fetchSubmissions = async (bountyId) => {
-        try {
-            const token = localStorage.getItem("accessToken");
-            const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/submissions/bounty/${bountyId}`, { headers });
-            if (res.ok) {
-                const data = await res.json();
-                setSubmissionCount(data.totalCount ?? 0);
-                setMySubmission(data.mySubmission ?? null);
-                // If student already submitted, reflect that
-                if (data.mySubmission) setSubmitted(true);
-            }
-        } catch (_) {}
+    // Fetch submission is not needed since tasks do not natively support submissions right now
+    const fetchSubmissions = async (taskId) => {
+        // No-op for tasks placeholder
     };
 
     useEffect(() => {
-        if (!id) { setFetchError("No bounty ID provided."); setLoading(false); return; }
-        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/bounties/${id}`)
+        if (!id) { setFetchError("No task ID provided."); setLoading(false); return; }
+        fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/tasks/${id}`)
             .then((r) => {
-                if (!r.ok) throw new Error("Bounty not found");
+                if (!r.ok) throw new Error("Task not found");
                 return r.json();
             })
             .then((data) => {
-                const b = data.bounty;
-                setBounty({
+                const b = data.task;
+                setTask({
                     id: b._id,
                     title: b.title,
                     description: b.description,
@@ -84,12 +76,12 @@ export default function BountyDetail() {
     }
 
     // ── Error ──
-    if (fetchError || !bounty) {
+    if (fetchError || !task) {
         return (
             <div className="min-h-screen bg-[#0e0e0e] flex items-center justify-center text-white">
                 <div className="text-center">
-                    <p className="text-lg font-semibold text-white/60 mb-3">{fetchError || "Bounty not found"}</p>
-                    <Link to="/bounties" className="text-sm text-purple-400 hover:text-purple-300 underline underline-offset-2">
+                    <p className="text-lg font-semibold text-white/60 mb-3">{fetchError || "Task not found"}</p>
+                    <Link to="/tasks" className="text-sm text-purple-400 hover:text-purple-300 underline underline-offset-2">
                         ← Back to marketplace
                     </Link>
                 </div>
@@ -97,10 +89,10 @@ export default function BountyDetail() {
         );
     }
 
-    const deadline = bounty.deadline ? new Date(bounty.deadline) : null;
-    const posted = bounty.posted ? new Date(bounty.posted) : null;
+    const deadline = task.deadline ? new Date(task.deadline) : null;
+    const posted = task.posted ? new Date(task.posted) : null;
     const daysLeft = deadline ? differenceInDays(deadline, new Date()) : null;
-    const companyInitial = (bounty.company_name || "M")[0].toUpperCase();
+    const companyInitial = (task.company_name || "M")[0].toUpperCase();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -133,9 +125,34 @@ export default function BountyDetail() {
         }
     };
 
+    const handleApply = async () => {
+        setSubmittingApply(true);
+        setApplyError("");
+        try {
+            const token = localStorage.getItem("accessToken");
+            if (!token) throw new Error("Please log in first.");
+
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/${id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ notes: "I am interested in this task." })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Failed to apply");
+            setApplied(true);
+        } catch (err) {
+            setApplyError(err.message);
+        } finally {
+            setSubmittingApply(false);
+        }
+    };
+
     const tabs = [
-        { id: "submit", label: "Submit" },
-        { id: "submissions", label: `Submissions (${submissionCount})` },
+        { id: "details", label: "Details" },
         { id: "discussion", label: "Discussion" },
     ];
 
@@ -148,7 +165,7 @@ export default function BountyDetail() {
 
                     {/* Back link */}
                     <Link
-                        to="/bounties"
+                        to="/tasks"
                         className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white transition-colors mb-8 group"
                     >
                         <ChevronLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -171,8 +188,8 @@ export default function BountyDetail() {
                                 {/* Company row */}
                                 <div className="flex items-center gap-2 text-sm text-white/40 mb-3">
                                     <Building2 className="w-4 h-4" />
-                                    <span>{bounty.company_name}</span>
-                                    {bounty.company_verified && (
+                                    <span>{task.company_name}</span>
+                                    {task.company_verified && (
                                         <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                                             <BadgeCheck className="w-4 h-4" />
                                             Verified
@@ -182,7 +199,7 @@ export default function BountyDetail() {
 
                                 {/* Title */}
                                 <h1 className="text-2xl sm:text-3xl font-bold text-white leading-snug mb-4">
-                                    {bounty.title}
+                                    {task.title}
                                 </h1>
 
                                 {/* Meta row */}
@@ -190,7 +207,7 @@ export default function BountyDetail() {
                                     <span className="flex items-center gap-1.5">
                                         <IndianRupee className="w-3.5 h-3.5 text-white" />
                                         <span className="text-white font-semibold">
-                                            {Number(bounty.budget).toLocaleString("en-IN")}
+                                            {Number(task.budget).toLocaleString("en-IN")}
                                         </span>
                                     </span>
                                     {deadline && (
@@ -217,12 +234,12 @@ export default function BountyDetail() {
                             >
                                 <h2 className="text-base font-semibold text-white mb-3">Description</h2>
                                 <p className="text-sm text-white/50 leading-relaxed mb-6">
-                                    {bounty.description}
+                                    {task.description}
                                 </p>
 
                                 <h2 className="text-base font-semibold text-white mb-3">Required skills</h2>
                                 <div className="flex flex-wrap gap-2">
-                                    {bounty.skills_required.map((s) => (
+                                    {task.skills_required.map((s) => (
                                         <span
                                             key={s}
                                             className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 font-medium"
@@ -259,157 +276,31 @@ export default function BountyDetail() {
 
                                 {/* Tab content */}
                                 <div className="p-6">
-                                    {activeTab === "submit" && (
-                                        <>
-                                            {bounty.status === "closed" ? (
-                                                /* ── Bounty Closed ── */
-                                                <div className="flex flex-col items-center justify-center py-12 text-center">
-                                                    <div className="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4">
-                                                        <svg className="w-7 h-7 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M5.07 19H19a2 2 0 001.73-2.99L13.73 4a2 2 0 00-3.46 0L3.27 16A2 2 0 005.07 19z" />
-                                                        </svg>
-                                                    </div>
-                                                    <h3 className="text-base font-semibold text-white mb-1">Bounty Closed</h3>
-                                                    <p className="text-sm text-white/40 max-w-xs">
-                                                        A submission has already been accepted for this bounty. It is no longer open for new submissions.
-                                                    </p>
-                                                </div>
-                                            ) : submitted ? (
-                                                <div className="flex flex-col items-center justify-center py-10 text-center">
-                                                    <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
-                                                        <CheckCircle2 className="w-7 h-7 text-emerald-400" />
-                                                    </div>
-                                                    <h3 className="text-base font-semibold text-white mb-1">Work submitted!</h3>
-                                                    <p className="text-sm text-white/40">The employer will review your submission.</p>
-                                                    <button
-                                                        className="mt-4 text-sm text-white/40 hover:text-white transition-colors underline underline-offset-2"
-                                                        onClick={() => setActiveTab("submissions")}
-                                                    >
-                                                        View my submission →
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <form onSubmit={handleSubmit} className="space-y-5">
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-white mb-2">
-                                                            Link to your work
-                                                        </label>
-                                                        <div className="relative">
-                                                            <Paperclip className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/25" />
-                                                            <input
-                                                                type="url"
-                                                                value={workLink}
-                                                                onChange={(e) => setWorkLink(e.target.value)}
-                                                                placeholder="https://github.com/... or Figma link"
-                                                                className="w-full h-11 pl-9 pr-4 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/25 focus:outline-none focus:border-purple-500/40 transition-all"
-                                                                required
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-white mb-2">
-                                                            Notes <span className="text-white/30 font-normal">(optional)</span>
-                                                        </label>
-                                                        <textarea
-                                                            value={notes}
-                                                            onChange={(e) => setNotes(e.target.value)}
-                                                            placeholder="What did you build? Any assumptions?"
-                                                            rows={4}
-                                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/25 focus:outline-none focus:border-purple-500/40 transition-all resize-none"
-                                                        />
-                                                    </div>
-
-                                                    {submitError && (
-                                                        <p className="text-sm text-rose-400 font-medium">{submitError}</p>
-                                                    )}
-
-                                                    <button
-                                                        type="submit"
-                                                        disabled={isSubmitting}
-                                                        className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold rounded-full hover:opacity-90 transition-opacity disabled:opacity-50"
-                                                    >
-                                                        {isSubmitting ? (
-                                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                        ) : (
-                                                            <Send className="w-4 h-4" />
-                                                        )}
-                                                        {isSubmitting ? "Submitting..." : "Submit work"}
-                                                    </button>
-                                                </form>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {activeTab === "submissions" && (
-                                        <div>
-                                            {/* Total count banner */}
-                                            <div className="flex items-center gap-2 mb-5 px-1">
-                                                <span className="text-sm text-white/40">
-                                                    <span className="text-white font-bold text-base">{submissionCount}</span>
-                                                    {" "}student{submissionCount !== 1 ? "s" : ""} have submitted work for this bounty.
-                                                </span>
+                                    {activeTab === "details" && (
+                                        <div className="flex flex-col items-center justify-center py-10 text-center">
+                                            <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+                                                <BadgeCheck className="w-7 h-7 text-purple-400" />
                                             </div>
-
-                                            {/* Student's own submission */}
-                                            {mySubmission ? (
-                                                <div className="rounded-xl bg-white/[0.04] border border-white/10 p-5 space-y-4">
-                                                    <div className="flex items-center justify-between">
-                                                        <p className="text-sm font-semibold text-white">Your Submission</p>
-                                                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${
-                                                            mySubmission.status === "accepted"
-                                                                ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20"
-                                                                : mySubmission.status === "declined"
-                                                                ? "text-red-400 bg-red-400/10 border-red-400/20"
-                                                                : "text-amber-400 bg-amber-400/10 border-amber-400/20"
-                                                        }`}>
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-current inline-block mr-1.5" />
-                                                            {mySubmission.status === "accepted" ? "Accepted ✓" : mySubmission.status === "declined" ? "Declined" : "Pending Review"}
-                                                        </span>
-                                                    </div>
-
-                                                    <div>
-                                                        <p className="text-xs text-white/30 uppercase tracking-widest font-semibold mb-2">Work Link</p>
-                                                        <a
-                                                            href={mySubmission.workLink}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors underline underline-offset-2 break-all"
-                                                        >
-                                                            <Paperclip className="w-3.5 h-3.5 flex-shrink-0" />
-                                                            {mySubmission.workLink}
-                                                        </a>
-                                                    </div>
-
-                                                    {mySubmission.notes && (
-                                                        <div>
-                                                            <p className="text-xs text-white/30 uppercase tracking-widest font-semibold mb-2">Your Notes</p>
-                                                            <p className="text-sm text-white/60 leading-relaxed whitespace-pre-wrap">{mySubmission.notes}</p>
-                                                        </div>
-                                                    )}
-
-                                                    {mySubmission.status === "accepted" && (
-                                                        <div className="flex items-center gap-3 mt-2 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                                                            <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                                                            <p className="text-sm text-emerald-400 font-semibold">
-                                                                🎉 Your work was accepted! Payment has been processed.
-                                                            </p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col items-center justify-center py-10 text-center">
-                                                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
-                                                        <Send className="w-5 h-5 text-white/20" />
-                                                    </div>
-                                                    <p className="text-sm font-semibold text-white">You haven't submitted yet</p>
-                                                    <p className="text-xs text-white/35 mt-1">Go to the Submit tab to send your work.</p>
-                                                    <button
-                                                        onClick={() => setActiveTab("submit")}
-                                                        className="mt-4 text-xs text-purple-400 hover:text-purple-300 underline underline-offset-2 transition-colors"
-                                                    >Submit now →</button>
-                                                </div>
+                                            <h3 className="text-base font-semibold text-white mb-1">How to Apply</h3>
+                                            <p className="text-sm text-white/40 mb-3 max-w-sm">
+                                                For tasks, you work closely with the MSME. Click apply below to express your interest, and be sure to start a discussion in the discussion tab to demonstrate your skills.
+                                            </p>
+                                            
+                                            {applyError && (
+                                                <p className="text-rose-400 text-xs font-semibold mb-3">{applyError}</p>
                                             )}
+
+                                            <button
+                                                onClick={handleApply}
+                                                disabled={applied || submittingApply}
+                                                className={`px-8 py-2.5 text-sm font-semibold rounded-full shadow-lg transition-all duration-300 ${
+                                                    applied
+                                                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed"
+                                                        : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 hover:scale-105 disabled:opacity-50"
+                                                }`}
+                                            >
+                                                {submittingApply ? "Sending..." : applied ? "Application Sent ✓" : "Apply to Task"}
+                                            </button>
                                         </div>
                                     )}
 
@@ -444,8 +335,8 @@ export default function BountyDetail() {
                                         {companyInitial}
                                     </div>
                                     <div>
-                                        <div className="text-sm font-semibold text-white">{bounty.company_name}</div>
-                                        {bounty.company_verified && (
+                                        <div className="text-sm font-semibold text-white">{task.company_name}</div>
+                                        {task.company_verified && (
                                             <div className="flex items-center gap-1 text-emerald-400 text-xs font-medium mt-0.5">
                                                 <BadgeCheck className="w-3 h-3" />
                                                 Verified
@@ -454,7 +345,7 @@ export default function BountyDetail() {
                                     </div>
                                 </div>
                                 <p className="text-xs text-white/40 leading-relaxed">
-                                    {bounty.company_bio}
+                                    {task.company_bio}
                                 </p>
                             </motion.div>
 
@@ -472,7 +363,7 @@ export default function BountyDetail() {
                                     <div className="flex items-baseline gap-1 mb-1">
                                         <IndianRupee className="w-5 h-5 text-white" />
                                         <span className="text-3xl font-black text-white">
-                                            {Number(bounty.budget).toLocaleString("en-IN")}
+                                            {Number(task.budget).toLocaleString("en-IN")}
                                         </span>
                                     </div>
                                     <p className="text-xs text-white/50">Budget · paid on acceptance</p>
