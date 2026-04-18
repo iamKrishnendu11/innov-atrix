@@ -14,6 +14,8 @@ import PostTask from "./components/pages/PostTask"
 import PostBounty from "./components/pages/PostBounty"
 import MsmeSubmissions from "./components/dashboard/MsmeSubmissions"
 import ViewSubmission from "./components/pages/ViewSubmission"
+import Tasks from "./components/pages/Tasks"
+import TaskDetail from "./components/pages/TaskDetail"
 
 function LandingPage() {
   const navigate = useNavigate()
@@ -44,6 +46,9 @@ export default function App() {
         <Route path="/bounties" element={<Bounties />} />
         <Route path="/bounty-detail" element={<BountyDetail />} />
         <Route path="/bounty-detail/:id" element={<BountyDetail />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/task-detail" element={<TaskDetail />} />
+        <Route path="/task-detail/:id" element={<TaskDetail />} />
         <Route path="/msme/login"      element={<MsmeLogin />} />
         <Route path="/msme/register"   element={<MsmeRegister />} />
         <Route path="/msme/dashboard"  element={<MsmeDashboard />} />

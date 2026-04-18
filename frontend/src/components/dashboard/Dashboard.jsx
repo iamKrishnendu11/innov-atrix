@@ -189,15 +189,15 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="flex-1 px-4 space-y-2 mt-4">
-                    <Link to="/" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
-                        <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 0' }}>home</span>
-                        <span className="font-medium tracking-wide text-sm">Home</span>
+                    <Link to="/tasks" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 0' }}>task</span>
+                        <span className="font-medium tracking-wide text-sm">Tasks</span>
                     </Link>
                     <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
                         <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 0' }}>rebase_edit</span>
                         <span className="font-medium tracking-wide text-sm">Bounties</span>
                     </Link>
-                    <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
+                    <Link to="/projects" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
                         <span className="material-symbols-outlined" style={{ fontVariationSettings: '"FILL" 0' }}>folder_open</span>
                         <span className="font-medium tracking-wide text-sm">Projects</span>
                     </Link>
@@ -506,9 +506,9 @@ const Dashboard = () => {
 
             {/* ── Bottom Nav (Mobile) ── */}
             <nav className="md:hidden fixed bottom-0 w-full h-16 bg-[#0e0e0e]/90 backdrop-blur-xl border-t border-outline-variant/10 flex justify-around items-center z-50 px-2">
-                <Link to="/" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>home</span>
-                    <span className="text-[10px] font-medium">Home</span>
+                <Link to="/tasks" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
+                    <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>task</span>
+                    <span className="text-[10px] font-medium">Tasks</span>
                 </Link>
                 <Link to="/bounties" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
                     <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>rebase_edit</span>
