@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import BountyCard from '@/components/ui-custom/BountyCard';
-import BountyCardSkeleton from '@/components/ui-custom/BountyCardSkeleton';
-import EmptyState from '@/components/ui-custom/EmptyState';
+import BountyCard from '../ui-custom/BountyCard';
+import BountyCardSkeleton from '../ui-custom/BountyCardSkeleton';
+import EmptyState from '../ui-custom/EmptyState';
 
 const CATEGORIES = [
     { value: 'all', label: 'All skills' },

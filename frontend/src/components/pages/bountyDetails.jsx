@@ -1,61 +1,62 @@
-var MyClass = React.createClass({
-    render: function () {
-        return (
-            <div>
-                <meta charSet="utf-8" />
-                <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-                <title>SkillBridge - Bounty Detail</title>
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-                <style dangerouslySetInnerHTML={{ __html: "\n        body { font-family: 'Inter', sans-serif; }\n    " }} />
-                {/* TopNavBar */}
-                <nav className="bg-[#0e0e0e]/80 backdrop-blur-lg w-full h-16 fixed top-0 z-50 shadow-xl border-b border-outline-variant/15 font-['Inter'] tracking-tight flex items-center justify-between px-8 mx-auto">
-                    <div className="flex items-center gap-8">
-                        <div className="text-2xl font-black bg-gradient-to-br from-[#ba9eff] to-[#699cff] bg-clip-text text-transparent">SkillBridge</div>
-                        <div className="hidden md:flex items-center gap-6">
-                            <a className="text-neutral-400 hover:text-[#ba9eff] transition-all font-semibold hover:shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Platform</a>
-                            <a className="text-white font-semibold shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Ecosystem</a>
-                            <a className="text-neutral-400 hover:text-[#ba9eff] transition-all font-semibold hover:shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Docs</a>
-                        </div>
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+export default function BountyDetail() {
+    return (
+        <div>
+            <meta charSet="utf-8" />
+            <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+            <title>SkillBridge - Bounty Detail</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+            <style dangerouslySetInnerHTML={{ __html: "\n        body { font-family: 'Inter', sans-serif; }\n    " }} />
+            {/* TopNavBar */}
+            <nav className="bg-[#0e0e0e]/80 backdrop-blur-lg w-full h-16 fixed top-0 z-50 shadow-xl border-b border-outline-variant/15 font-['Inter'] tracking-tight flex items-center justify-between px-8 mx-auto">
+                <div className="flex items-center gap-8">
+                    <div className="text-2xl font-black bg-gradient-to-br from-[#ba9eff] to-[#699cff] bg-clip-text text-transparent">SkillBridge</div>
+                    <div className="hidden md:flex items-center gap-6">
+                        <a className="text-neutral-400 hover:text-[#ba9eff] transition-all font-semibold hover:shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Platform</a>
+                        <a className="text-white font-semibold shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Ecosystem</a>
+                        <a className="text-neutral-400 hover:text-[#ba9eff] transition-all font-semibold hover:shadow-[0_0_20px_rgba(186,158,255,0.2)]" href="#">Docs</a>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <div className="relative hidden sm:block">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-                            <input className="bg-surface-container-lowest border border-outline-variant/15 rounded-full py-1.5 pl-9 pr-4 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary-dim transition-all w-64" placeholder="Search bounties..." type="text" />
-                        </div>
-                        <button className="bg-gradient-to-r from-[#ba9eff] to-[#699cff] text-on-primary-fixed font-semibold px-4 py-1.5 rounded-full text-sm hover:shadow-[0_0_20px_rgba(186,158,255,0.4)] transition-all">Get Started</button>
-                        <img alt="User Profile" className="w-8 h-8 rounded-full border border-outline-variant/30 object-cover" data-alt="close-up portrait of a young professional man with a neutral expression, warm studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUTq9j5QpWL8nnoJRpKc6kJfCZ2lezsl4bNG7XzId3iLGUW0SyDr61d4FwkV3syfN_iiaGhiAdDAEForA4YISCRcI9J_w7jb3N2HV2wacKPa2FZbLgezPR9RTYe1LdYEerUczjGxe5igAjixUoIjgH1PoTz5SvIKM8mZWDigENSXCIB71zRwwhmZwulswZvfpb60D2ehpNY3KbQkwjCOvQOClHR9xyBymJabMDhJ0IzrT5S_GGIa7-smZ87Ss5dfcvFe67pWSq8wQ" />
+                </div>
+                <div className="flex items-center gap-6">
+                    <div className="relative hidden sm:block">
+                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                        <input className="bg-surface-container-lowest border border-outline-variant/15 rounded-full py-1.5 pl-9 pr-4 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary-dim transition-all w-64" placeholder="Search bounties..." type="text" />
                     </div>
-                </nav>
-                {/* SideNavBar */}
-                <aside className="flex flex-col fixed left-0 top-0 h-full w-64 border-r border-white/5 bg-neutral-900/40 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_15px_rgba(186,158,255,0.05)] pt-20 pb-6 px-4 z-40 hidden lg:flex flex-col font-['Inter'] antialiased">
-                    <div className="flex-1 space-y-2 mt-8">
-                        <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group" href="#">
-                            <span className="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
-                            <span className="font-medium text-sm">Home</span>
-                        </a>
-                        <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 scale-95 duration-200 ease-out" href="#">
-                            <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>rebase_edit</span>
-                            <span className="font-medium text-sm">Bounties</span>
-                        </a>
-                        <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group" href="#">
-                            <span className="material-symbols-outlined group-hover:text-primary transition-colors">folder_open</span>
-                            <span className="font-medium text-sm">Projects</span>
-                        </a>
-                        <a className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group" href="#">
-                            <span className="material-symbols-outlined group-hover:text-primary transition-colors">person</span>
-                            <span className="font-medium text-sm">Profile</span>
-                        </a>
-                    </div>
-                </aside>
-                {/* Main Content */}
-                <main className="pt-24 pb-12 px-6 lg:pl-72 max-w-screen-2xl mx-auto min-h-screen">
-                    {/* Back Link */}
-                    <a className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-6 text-sm" href="#">
-                        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                        Back to Bounties
-                    </a>
+                    <button className="bg-gradient-to-r from-[#ba9eff] to-[#699cff] text-on-primary-fixed font-semibold px-4 py-1.5 rounded-full text-sm hover:shadow-[0_0_20px_rgba(186,158,255,0.4)] transition-all">Get Started</button>
+                    <img alt="User Profile" className="w-8 h-8 rounded-full border border-outline-variant/30 object-cover" data-alt="close-up portrait of a young professional man with a neutral expression, warm studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUTq9j5QpWL8nnoJRpKc6kJfCZ2lezsl4bNG7XzId3iLGUW0SyDr61d4FwkV3syfN_iiaGhiAdDAEForA4YISCRcI9J_w7jb3N2HV2wacKPa2FZbLgezPR9RTYe1LdYEerUczjGxe5igAjixUoIjgH1PoTz5SvIKM8mZWDigENSXCIB71zRwwhmZwulswZvfpb60D2ehpNY3KbQkwjCOvQOClHR9xyBymJabMDhJ0IzrT5S_GGIa7-smZ87Ss5dfcvFe67pWSq8wQ" />
+                </div>
+            </nav>
+            {/* SideNavBar */}
+            <aside className="flex flex-col fixed left-0 top-0 h-full w-64 border-r border-white/5 bg-neutral-900/40 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_15px_rgba(186,158,255,0.05)] pt-20 pb-6 px-4 z-40 hidden lg:flex flex-col font-['Inter'] antialiased">
+                <div className="flex-1 space-y-2 mt-8">
+                    <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group">
+                        <span className="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
+                        <span className="font-medium text-sm">Home</span>
+                    </Link>
+                    <Link to="/bounties" className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 scale-95 duration-200 ease-out">
+                        <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: '"FILL" 1' }}>rebase_edit</span>
+                        <span className="font-medium text-sm">Bounties</span>
+                    </Link>
+                    <Link to="/bounties" className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group">
+                        <span className="material-symbols-outlined group-hover:text-primary transition-colors">folder_open</span>
+                        <span className="font-medium text-sm">Projects</span>
+                    </Link>
+                    <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-400 hover:text-white transition-colors hover:bg-white/10 duration-300 scale-95 hover:scale-100 ease-out group">
+                        <span className="material-symbols-outlined group-hover:text-primary transition-colors">person</span>
+                        <span className="font-medium text-sm">Profile</span>
+                    </Link>
+                </div>
+            </aside>
+            {/* Main Content */}
+            <main className="pt-24 pb-12 px-6 lg:pl-72 max-w-screen-2xl mx-auto min-h-screen">
+                {/* Back Link */}
+                <Link to="/bounties" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-6 text-sm">
+                    <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Back to Bounties
+                </Link>
                     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                         {/* Left Column: Details */}
                         <div className="xl:col-span-2 space-y-8">
@@ -209,8 +210,7 @@ var MyClass = React.createClass({
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
-        );
-    }
-});
+            </main>
+        </div>
+    );
+}

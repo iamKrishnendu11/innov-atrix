@@ -5,6 +5,8 @@ import Footer from "./components/landing-page/Footer"
 import Signup from "./components/auth/Signup"
 import Login from "./components/auth/Login"
 import Dashboard from "./components/dashboard/Dashboard"
+import Bounties from "./components/pages/Bounty"
+import BountyDetail from "./components/pages/bountyDetails"
 
 function LandingPage() {
   const navigate = useNavigate()
@@ -32,7 +34,10 @@ export default function App() {
           </div>
         } />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/bounties" element={<Bounties />} />
+        <Route path="/bounty-detail" element={<BountyDetail />} />
+        <Route path="/bounty-detail/:id" element={<BountyDetail />} />
       </Routes>
     </div>
   )
-}
+}

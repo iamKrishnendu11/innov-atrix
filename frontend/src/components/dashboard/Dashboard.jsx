@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
     return (
@@ -24,22 +25,22 @@ const Dashboard = () => {
                         <div className="text-xs text-on-surface-variant tracking-wider uppercase mt-1 font-semibold opacity-70">Future of Work</div>
                     </div>
                     <div className="flex-1 px-4 space-y-2 mt-4">
-                        <a className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group" href="#">
+                        <Link to="/" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
                             <span className="material-symbols-outlined group-hover:scale-110 transition-transform duration-200" style={{ fontVariationSettings: '"FILL" 0' }}>home</span>
                             <span className="font-medium tracking-wide text-sm">Home</span>
-                        </a>
-                        <a className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group" href="#">
+                        </Link>
+                        <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
                             <span className="material-symbols-outlined group-hover:scale-110 transition-transform duration-200" style={{ fontVariationSettings: '"FILL" 0' }}>rebase_edit</span>
                             <span className="font-medium tracking-wide text-sm">Bounties</span>
-                        </a>
-                        <a className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group" href="#">
+                        </Link>
+                        <Link to="/bounties" className="flex items-center gap-4 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-300 group">
                             <span className="material-symbols-outlined group-hover:scale-110 transition-transform duration-200" style={{ fontVariationSettings: '"FILL" 0' }}>folder_open</span>
                             <span className="font-medium tracking-wide text-sm">Projects</span>
-                        </a>
-                        <a className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 transition-all duration-300 group" href="#">
+                        </Link>
+                        <Link to="/dashboard" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#ba9eff] border-r-2 border-[#ba9eff] font-bold bg-white/5 transition-all duration-300 group">
                             <span className="material-symbols-outlined group-hover:scale-110 transition-transform duration-200" style={{ fontVariationSettings: '"FILL" 1' }}>person</span>
                             <span className="font-medium tracking-wide text-sm">Profile</span>
-                        </a>
+                        </Link>
                     </div>
                     <div className="p-6 border-t border-white/5">
                         <div className="flex items-center gap-3">
@@ -325,22 +326,22 @@ const Dashboard = () => {
                 </main>
                 {/* Bottom Navigation (Mobile) */}
                 <nav className="md:hidden fixed bottom-0 w-full h-16 bg-[#0e0e0e]/90 backdrop-blur-xl border-t border-outline-variant/10 flex justify-around items-center z-50 px-2 pb-safe">
-                    <a className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+                    <Link to="/" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
                         <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>home</span>
                         <span className="text-[10px] font-medium">Home</span>
-                    </a>
-                    <a className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+                    </Link>
+                    <Link to="/bounties" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
                         <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>rebase_edit</span>
                         <span className="text-[10px] font-medium">Bounties</span>
-                    </a>
-                    <a className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+                    </Link>
+                    <Link to="/bounties" className="flex flex-col items-center justify-center w-16 h-full text-on-surface-variant hover:text-primary transition-colors">
                         <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 0' }}>folder_open</span>
                         <span className="text-[10px] font-medium">Projects</span>
-                    </a>
-                    <a className="flex flex-col items-center justify-center w-16 h-full text-primary" href="#">
+                    </Link>
+                    <Link to="/dashboard" className="flex flex-col items-center justify-center w-16 h-full text-primary">
                         <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: '"FILL" 1' }}>person</span>
                         <span className="text-[10px] font-bold">Profile</span>
-                    </a>
+                    </Link>
                 </nav>
             </div>
         );
