@@ -95,3 +95,12 @@ export const loginUser = async (req, res) => {
         return res.status(500).json({ message: error.message || "Internal server error during login" });
     }
 };
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        // req.user is attached by verifyJWT middleware
+        return res.status(200).json({ user: req.user });
+    } catch (error) {
+        return res.status(500).json({ message: error.message || "Error fetching user" });
+    }
+};

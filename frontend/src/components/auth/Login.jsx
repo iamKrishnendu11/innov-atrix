@@ -32,8 +32,9 @@ const Form = () => {
                 return;
             }
 
-            // Success -> store user and redirect to dashboard
+            // Success -> store user, token and redirect to dashboard
             localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("accessToken", data.accessToken);
             navigate('/dashboard');
         } catch (err) {
             setError("Could not connect to server.");
