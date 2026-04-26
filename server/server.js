@@ -9,6 +9,7 @@ import bountyRouter from "./routes/bounty.route.js";
 import submissionRouter from "./routes/submission.route.js";
 import taskRouter from "./routes/task.route.js";
 import aiRouter from "./routes/ai.route.js";
+import applicationRouter from "./routes/application.route.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use("/api/bounties", bountyRouter);
 app.use("/api/submissions", submissionRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/ai", aiRouter);
+app.use("/api/applications", applicationRouter);
 
 const PORT = process.env.PORT || 5001;
 await connectDB();
