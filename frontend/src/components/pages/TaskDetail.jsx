@@ -115,34 +115,29 @@ export default function TaskDetail() {
     const daysLeft = deadline ? differenceInDays(deadline, new Date()) : null;
     const companyInitial = (task.company_name || "M")[0].toUpperCase();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!workLink.trim()) return;
-
-        setIsSubmitting(true);
-        setSubmitError("");
-
+    const handleApply = async () => {
+        setSubmittingApply(true);
+        setApplyError("");
         try {
             const token = localStorage.getItem("accessToken");
-            const res = await fetch(`http://localhost:5000/api/submissions/${id}`, {
+            if (!token) throw new Error("Please log in first.");
+
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://stepahead-9tra.onrender.com'}/api/applications/${id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ workLink, notes }),
+                body: JSON.stringify({ notes: "I am interested in this task." })
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to submit");
-            
-            setSubmitted(true);
-            // Refresh count after submission
-            await fetchSubmissions(id);
+            if (!res.ok) throw new Error(data.message || "Failed to apply");
+            setApplied(true);
         } catch (err) {
-            setSubmitError(err.message);
+            setApplyError(err.message);
         } finally {
-            setIsSubmitting(false);
+            setSubmittingApply(false);
         }
     };
 
@@ -350,17 +345,23 @@ export default function TaskDetail() {
                                                 For tasks, you work closely with the MSME. Click apply below to express your interest, and be sure to start a discussion in the discussion tab to demonstrate your skills.
                                             </p>
                                             {!isMSME && (
-                                                <button
-                                                    onClick={() => setApplied(true)}
-                                                    disabled={applied}
-                                                    className={`px-8 py-2.5 text-sm font-semibold rounded-full shadow-lg transition-all duration-300 ${
-                                                        applied
-                                                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed"
-                                                            : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 hover:scale-105"
-                                                    }`}
-                                                >
-                                                    {applied ? "Application Sent ✓" : "Apply to Task"}
-                                                </button>
+                                                <>
+                                                    {applyError && (
+                                                        <p className="text-rose-400 text-xs font-semibold mb-3">{applyError}</p>
+                                                    )}
+
+                                                    <button
+                                                        onClick={handleApply}
+                                                        disabled={applied || submittingApply}
+                                                        className={`px-8 py-2.5 text-sm font-semibold rounded-full shadow-lg transition-all duration-300 ${
+                                                            applied
+                                                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed"
+                                                                : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 hover:scale-105 disabled:opacity-50"
+                                                        }`}
+                                                    >
+                                                        {submittingApply ? "Sending..." : applied ? "Application Sent ✓" : "Apply to Task"}
+                                                    </button>
+                                                </>
                                             )}
                                             {isMSME && (
                                                 <p className="text-sm text-emerald-400 font-semibold p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
